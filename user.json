@@ -1,0 +1,9 @@
+request = {}
+request["id"] = 1
+request["username"] = "Vasiliy"
+request["firstName"] = "Pupkin"
+request["lastName"] = "Vasilevich"
+request["email"] = "pochemybiinet@v.net"
+request["password"] = "qwerty"
+request["phone"] = "88005553535"
+request["userStatus"] = 1
