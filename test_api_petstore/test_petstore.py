@@ -56,22 +56,46 @@ def test_post_pet_negative():
 
 def test_get_pet():
     # задаем url
-    url = "https://petstore.swagger.io/v2/pet/9223372036854758200"
+    url = "https://petstore.swagger.io/v2/pet"
+    # задаем тело запроса
+    request = {}
+    request['name'] = 'sbercat'
+    request['photoUrls'] = ['photocat']
+    request['category'] = {}
+    request['category']['name'] = 'cats'
+    # отправляем post запрос
+    requests_post = requests.post(url, json=request, verify=False)
+    # выводим ответ на запрос в формате json
+    print('result=', json.dumps(requests_post.json(), indent=4, sort_keys=True))
+    # задаем url
+    url_get = "https://petstore.swagger.io/v2/pet/" + str(requests_post.json()['id'])
     # отправляем get запрос
-    request_get = requests.get(url, verify=False)
+    request_get = requests.get(url_get, verify=False)
     # выводим результат запроса в формате json
     print("result=", json.dumps(request_get.json(), indent=4, sort_keys=True))
     # проверяем что id в url и ответе совпадают
-    assert request_get.json()['id'] == 9223372036854758200
+    assert str(request_get.json()['id']) == str(requests_post.json()['id'])
 
 def test_get_pet_negative():
+    # задаем url
+    url = "https://petstore.swagger.io/v2/pet"
+    # задаем тело запроса
+    request = {}
+    request['name'] = 'sbercat'
+    request['photoUrls'] = ['photocat']
+    request['category'] = {}
+    request['category']['name'] = 'cats'
+    # отправляем post запрос
+    requests_post = requests.post(url, json=request, verify=False)
+    # выводим ответ на запрос в формате json
+    print('result=', json.dumps(requests_post.json(), indent=4, sort_keys=True))
     # задаем не корректный url и отправляем get запрос
-    url = "https://petstore.swagger.io/v2/pet/" + str(123123123123)
-    request_get = requests.get(url, verify=False)
+    url_get = "https://petstore.swagger.io/v2/pet/" + 'petcat'
+    request_get = requests.get(url_get, verify=False)
     # выводим ответ на отправленный запрос в формате json
     print("result=", json.dumps(request_get.json(), indent=4, sort_keys=True))
-    # выполняем проверку параметра message
-    assert request_get.json()['message'] == "Pet not found"
+    # выполняем проверку
+    assert str(request_get).__contains__('404')
 
 def test_put_pet():
     # задаем url и заполняем тело запроса
@@ -162,14 +186,27 @@ def test_put_pet_negative():
 
 
 def test_delete_pet_negative():
-    # задаем не корректный url
-    url_del = "https://petstore.swagger.io/v2/pet/" + "8778722222222222289789"
+    # сформируем и отправим post запрос для создания сущности
+    url = "https://petstore.swagger.io/v2/pet"
+    request = {}
+    request['name'] = 'sbercat'
+    request['photoUrls'] = ['photocat']
+    request['category'] = {}
+    request['category']['name'] = 'cats'
+
+    requests_post = requests.post(url, json=request, verify=False)
+    print('result=', json.dumps(requests_post.json(), indent=4, sort_keys=True))
+    # проверяем ответ
+    assert str(requests_post).__contains__('200')
+    # задаем url с не корректным id
+    url_del = "https://petstore.swagger.io/v2/pet/" + 'sda'
     # отправляем запрос
     request_del = requests.delete(url_del, verify=False)
     # выводим результат запроса
-    print("result_del=", request_del)
-    # проверяем статус код ответа
-    assert str(request_del).__contains__("404")
+    print("result_del=", json.dumps(request_del.json(), indent=4, sort_keys=True))
+    # проверяем ответ
+    assert str(request_del).__contains__('404')
+
 
 def test_post_image():
     # сформируем и отправим post запрос для создания сущности
@@ -252,6 +289,19 @@ def test_post_pet_update():
     assert request_get.json()['status'] == status
 
 def test_post_pet_update_negative():
+    # задаем url и наполняем тело запроса
+    url = "https://petstore.swagger.io/v2/pet/"
+    request = {}
+    request['name'] = 'sbercat'
+    request['photoUrls'] = ['photocat']
+    request['category'] = {}
+    request['category']['name'] = 'cats'
+    # отправляем post запрос
+    requests_post = requests.post(url, json=request, verify=False)
+    # выводим ответ в формате json
+    print('result=', json.dumps(requests_post.json(), indent=4, sort_keys=True))
+    # выполняем проверку что id в теле ответа не пустой
+    assert requests_post.json()['id'] is not None
     # задаем url запроса, указываем не существующий id
     url_post = "https://petstore.swagger.io/v2/pet/" + '77777777777778'
     # наполняем тело запроса
