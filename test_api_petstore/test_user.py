@@ -1,7 +1,6 @@
 import pytest
 import requests
 import json
-import time
 from resources import urls as urls
 from Steps import support_steps as support_steps
 
