@@ -142,8 +142,6 @@ def test_put_pet_assert():
     request_put['id'] = str(requests_post.json()['id'])
     request_put['name'] = support_steps.generate_random_letter_string(6)
     request_put['photoUrls'] = ['Photodog']
-    #  проверяем что получилось в теле запроса
-    #print('request_put=', json.dumps(request_put.json(), indent=4, sort_keys=True))
     #  отправляем put запрос
     request_put_r = requests.put(urls.url_pet, json=request_put, verify=False)
     #  проверяем ответ на запрос
@@ -199,9 +197,9 @@ def test_post_image():
     # откроем файл для чтения
     file = for_files.open_file('venv/Scripts/files/send.txt')
     # отправляем post запрос с аттачем
-    post_file = requests.post(urls.url_pet_get(str(requests_post.json()['id']) + "/uploadImage"), files=file, verify=False)
+    post_file = requests.post(urls.url_pet_upload(str(requests_post.json()['id'])), files=file, verify=False)
     # выводим url на который отправили запрос для проверки сформированного id, и проверяем ответ на запрос
-    print('response = ', urls.url_pet_get(str(requests_post.json()['id']) + "/uploadImage"), post_file)
+    print('response = ', urls.url_pet_upload(str(requests_post.json()['id'])), post_file)
     # закрываем файл
     for_files.close_file(file)
     # Проверка ответа на загрузку post запроса с аттачем
@@ -218,11 +216,10 @@ def test_post_image_negative():
     requests_post = requests.post(urls.url_pet, json=request, verify=False)
     print('result_post=', json.dumps(requests_post.json(), indent=4, sort_keys=True))
     # сформируем post запрос для отправки без аттача с id ответа на прошлый запрос
-    url_image = "https://petstore.swagger.io/v2/pet/" + str(requests_post.json()['id']) + "/uploadImage"
     # отправляем запрос
-    post_file = requests.post(urls.url_pet_get(str(requests_post.json()['id']) + "/uploadImage"), verify=False)
+    post_file = requests.post(urls.url_pet_upload(str(requests_post.json()['id'])), verify=False)
     # выводим url для проверки id и ответ который пришел
-    print('response = ', urls.url_pet_get(str(requests_post.json()['id']) + "/uploadImage"), post_file)
+    print('response = ', urls.url_pet_upload(str(requests_post.json()['id'])), post_file)
     # Проверка ответа на загрузку post запроса с аттачем
     assert str(post_file).__contains__("415")
 
@@ -297,7 +294,7 @@ def test_find_by_status():
     # выводим ответ на запрос в формате json
     print('result=', json.dumps(requests_post.json(), indent=4, sort_keys=True))
     # отправляем get запрос
-    request_get = requests.get(urls.url_pet_get('findByStatus?status=available'), verify=False)
+    request_get = requests.get(urls.url_pet_find_by_status('available'), verify=False)
     # выводим ответ в формате json
     print('result get=', json.dumps(request_get.json(), indent=4, sort_keys=True))
     #выполняем проверку на статус код и что массив не пуст
@@ -316,9 +313,8 @@ def test_find_by_status_negative():
     requests_post = requests.post(urls.url_pet, json=request, verify=False)
     # выводим ответ на запрос в формате json
     print('result=', json.dumps(requests_post.json(), indent=4, sort_keys=True))
-    url_get = "https://petstore.swagger.io/v2/pet/" + 'findByStatus?status=open'
     # выводим ответ в формате json
-    request_get = requests.get(urls.url_pet_get('findByStatus?status=open'), verify=False)
+    request_get = requests.get(urls.url_pet_find_by_status('open'), verify=False)
     print('result get=', json.dumps(request_get.json(), indent=4, sort_keys=True))
     # выполняем проверку на статус код и что массив пуст
     assert request_get.json() == []
