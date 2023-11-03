@@ -4,6 +4,8 @@ import json
 from resources import urls as urls
 from Steps import support_steps as support_steps
 
+@pytest.mark.smoke_regression
+@pytest.mark.full_regression
 def test_create_user():
     # заполняем тело запроса
     request = {}
@@ -14,7 +16,7 @@ def test_create_user():
     request["email"] = support_steps.generate_random_letter_string_mail(8)
     request["password"] = support_steps.generate_random_letter_string(5)
     request["phone"] = support_steps.generate_random_number_string(11)
-    request["userStatus"] = 1
+    request["userStatus"] = support_steps.generate_random_number_string(5)
     # отправляем запрос
     request_post = requests.post(urls.url_user, json=request, verify=False)
     # проверяем ответ полученый на запрос
@@ -22,6 +24,7 @@ def test_create_user():
     # проверяем что статус код ответа 500
     assert str(request_post).__contains__('200')
 
+@pytest.mark.full_regression
 def test_create_user_negative():
     # заполняем тело запроса
     request = {}
@@ -32,7 +35,7 @@ def test_create_user_negative():
     request["email"] = support_steps.generate_random_letter_string_mail(8)
     request["password"] = support_steps.generate_random_letter_string(5)
     request["phone"] = support_steps.generate_random_number_string(11)
-    request["userStatus"] = 1254896448821
+    request["userStatus"] = support_steps.generate_random_number_string(13)
     # отправляем запрос
     request_post = requests.post(urls.url_user, json=request, verify=False)
     # проверяем ответ полученый на запрос
@@ -41,6 +44,8 @@ def test_create_user_negative():
     assert str(request_post).__contains__('500')
     assert request_post.json()['message'] == "something bad happened"
 
+@pytest.mark.smoke_regression
+@pytest.mark.full_regression
 def test_delete_user():
     # заполняем тело запроса
     request = {}
@@ -51,7 +56,7 @@ def test_delete_user():
     request["email"] = support_steps.generate_random_letter_string_mail(8)
     request["password"] = support_steps.generate_random_letter_string(5)
     request["phone"] = support_steps.generate_random_number_string(11)
-    request["userStatus"] = 1
+    request["userStatus"] = support_steps.generate_random_number_string(5)
     # отправляем запрос
     request_post = requests.post(urls.url_user, json=request, verify=False)
     # проверяем ответ полученый на запрос
@@ -64,6 +69,7 @@ def test_delete_user():
     # проверяем что пользователь удален
     assert str(request_del).__contains__('200')
 
+@pytest.mark.full_regression
 def test_delete_user_negative():
     # заполняем тело запроса
     request = {}
@@ -74,7 +80,7 @@ def test_delete_user_negative():
     request["email"] = support_steps.generate_random_letter_string_mail(8)
     request["password"] = support_steps.generate_random_letter_string(5)
     request["phone"] = support_steps.generate_random_number_string(11)
-    request["userStatus"] = 1
+    request["userStatus"] = support_steps.generate_random_number_string(5)
     # отправляем запрос
     request_post = requests.post(urls.url_user, json=request, verify=False)
     # проверяем ответ полученый на запрос
@@ -86,6 +92,8 @@ def test_delete_user_negative():
     # проверяем что пользователь удален
     assert str(request_del).__contains__('404')
 
+@pytest.mark.smoke_regression
+@pytest.mark.full_regression
 def test_get_user():
     # заполняем тело запроса
     request = {}
@@ -96,7 +104,7 @@ def test_get_user():
     request["email"] = support_steps.generate_random_letter_string_mail(8)
     request["password"] = support_steps.generate_random_letter_string(5)
     request["phone"] = support_steps.generate_random_number_string(11)
-    request["userStatus"] = 1
+    request["userStatus"] = support_steps.generate_random_number_string(5)
     # отправляем запрос
     request_post = requests.post(urls.url_user, json=request, verify=False)
     # проверяем ответ полученый на запрос
@@ -108,6 +116,7 @@ def test_get_user():
     # проверяем статус код
     assert str(request_get).__contains__('200')
 
+@pytest.mark.full_regression
 def test_get_user_negative():
     # заполняем тело запроса
     request = {}
@@ -118,7 +127,7 @@ def test_get_user_negative():
     request["email"] = support_steps.generate_random_letter_string_mail(8)
     request["password"] = support_steps.generate_random_letter_string(5)
     request["phone"] = support_steps.generate_random_number_string(11)
-    request["userStatus"] = 1
+    request["userStatus"] = support_steps.generate_random_number_string(5)
     # отправляем запрос
     request_post = requests.post(urls.url_user, json=request, verify=False)
     # проверяем ответ полученый на запрос
@@ -131,6 +140,8 @@ def test_get_user_negative():
     assert str(request_get).__contains__('404')
     assert request_get.json()['message'] == "User not found"
 
+@pytest.mark.smoke_regression
+@pytest.mark.full_regression
 def test_put_user():
     # заполняем тело запроса
     request = {}
@@ -141,7 +152,7 @@ def test_put_user():
     request["email"] = support_steps.generate_random_letter_string_mail(8)
     request["password"] = support_steps.generate_random_letter_string(5)
     request["phone"] = support_steps.generate_random_number_string(11)
-    request["userStatus"] = 1
+    request["userStatus"] = support_steps.generate_random_number_string(5)
     # отправляем запрос
     request_post = requests.post(urls.url_user, json=request, verify=False)
     # проверяем ответ полученый на запрос
@@ -155,7 +166,7 @@ def test_put_user():
     request_put["email"] = support_steps.generate_random_letter_string_mail(8)
     request_put["password"] = support_steps.generate_random_letter_string(5)
     request_put["phone"] = support_steps.generate_random_number_string(11)
-    request_put["userStatus"] = 1
+    request_put["userStatus"] = support_steps.generate_random_number_string(5)
     request_put_r = requests.put(urls.url_user_get(request["username"]), json=request_put, verify=False)
     # проверяем ответ полученый на запрос
     print('view_result_put = ', json.dumps(request_put_r.json(), indent=4, sort_keys=True))
@@ -169,6 +180,7 @@ def test_put_user():
     assert str(request_get).__contains__('200')
     assert request_get.json()['username'] == request_put["username"]
 
+@pytest.mark.full_regression
 def test_put_user_negative():
     # заполняем тело запроса
     request = {}
@@ -179,7 +191,7 @@ def test_put_user_negative():
     request["email"] = support_steps.generate_random_letter_string_mail(8)
     request["password"] = support_steps.generate_random_letter_string(5)
     request["phone"] = support_steps.generate_random_number_string(11)
-    request["userStatus"] = 1
+    request["userStatus"] = support_steps.generate_random_number_string(5)
     # отправляем запрос
     request_post = requests.post(urls.url_user, json=request, verify=False)
     # проверяем ответ полученый на запрос
@@ -193,7 +205,7 @@ def test_put_user_negative():
     request_put["email"] = support_steps.generate_random_letter_string_mail(8)
     request_put["password"] = support_steps.generate_random_letter_string(5)
     request_put["phone"] = support_steps.generate_random_number_string(11)
-    request_put["userStatus"] = 1
+    request_put["userStatus"] = support_steps.generate_random_number_string(5)
     request_put_r = requests.put(urls.url_user_get(request["username"]), json=request_put, verify=False)
     # проверяем ответ полученый на запрос
     print('view_result_put = ', json.dumps(request_put_r.json(), indent=4, sort_keys=True))

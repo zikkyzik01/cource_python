@@ -5,26 +5,29 @@ import for_files
 from resources import urls as urls
 from Steps import support_steps as support_steps
 
-
+@pytest.mark.smoke_regression
+@pytest.mark.full_regression
 def test_api():
     # задаем тело запроса
     request = {}
     request['name'] = support_steps.generate_random_letter_string(6)
-    request['photoUrls'] = ['photocat']
+    request['photoUrls'] = [support_steps.generate_random_letter_string(8)]
     request['category'] = {}
-    request['category']['name'] = 'cats'
+    request['category']['name'] = support_steps.generate_random_letter_string(4)
     # отправляем post запрос
     requests_post = requests.post(urls.url_pet, json=request, verify=False)
     # выводим ответ на запрос в формате json
     print('result=', json.dumps(requests_post.json(), indent=4, sort_keys=True))
 
+@pytest.mark.smoke_regression
+@pytest.mark.full_regression
 def test_post_pet():
     # наполняем тело запроса
     request = {}
     request['name'] = support_steps.generate_random_letter_string(6)
-    request['photoUrls'] = ['photocat']
+    request['photoUrls'] = [support_steps.generate_random_letter_string(8)]
     request['category'] = {}
-    request['category']['name'] = 'cats'
+    request['category']['name'] = support_steps.generate_random_letter_string(4)
     # отправляем post запрос
     requests_post = requests.post(urls.url_pet, json=request, verify=False)
     # выводим ответ в формате json
@@ -36,11 +39,12 @@ def test_post_pet():
     # проверяем что значения параметра id в ответах на отправленные запросы совпадают
     assert requests_post.json()['id'] == request_get.json()['id']
 
+@pytest.mark.full_regression
 def test_post_pet_negative():
     # задаем url и формируем тело запроса
     request = {}
     request['name'] = support_steps.generate_random_letter_string(6)
-    request['photoUrls'] = ['photocat']
+    request['photoUrls'] = [support_steps.generate_random_letter_string(8)]
     request['category'] = {}
     request['category']['name'] = []
     # отправляем post запрос
@@ -50,13 +54,15 @@ def test_post_pet_negative():
     # выполняем проверку параметра message
     assert requests_post.json()['message'] == "something bad happened"
 
+@pytest.mark.smoke_regression
+@pytest.mark.full_regression
 def test_get_pet():
     # задаем тело запроса
     request = {}
     request['name'] = support_steps.generate_random_letter_string(6)
-    request['photoUrls'] = ['photocat']
+    request['photoUrls'] = [support_steps.generate_random_letter_string(8)]
     request['category'] = {}
-    request['category']['name'] = 'cats'
+    request['category']['name'] = support_steps.generate_random_letter_string(4)
     # отправляем post запрос
     requests_post = requests.post(urls.url_pet, json=request, verify=False)
     # выводим ответ на запрос в формате json
@@ -68,13 +74,14 @@ def test_get_pet():
     # проверяем что id в url и ответе совпадают
     assert str(request_get.json()['id']) == str(requests_post.json()['id'])
 
+@pytest.mark.full_regression
 def test_get_pet_negative():
     # задаем тело запроса
     request = {}
     request['name'] = support_steps.generate_random_letter_string(6)
-    request['photoUrls'] = ['photocat']
+    request['photoUrls'] = [support_steps.generate_random_letter_string(8)]
     request['category'] = {}
-    request['category']['name'] = 'cats'
+    request['category']['name'] = support_steps.generate_random_letter_string(4)
     # отправляем post запрос
     requests_post = requests.post(urls.url_pet, json=request, verify=False)
     # выводим ответ на запрос в формате json
@@ -86,13 +93,15 @@ def test_get_pet_negative():
     # выполняем проверку
     assert str(request_get).__contains__('404')
 
+@pytest.mark.smoke_regression
+@pytest.mark.full_regression
 def test_put_pet():
     # заполняем тело запроса
     request = {}
     request['name'] = support_steps.generate_random_letter_string(6)
-    request['photoUrls'] = ['photocat']
+    request['photoUrls'] = [support_steps.generate_random_letter_string(8)]
     request['category'] = {}
-    request['category']['name'] = 'cats'
+    request['category']['name'] = support_steps.generate_random_letter_string(4)
     # отправляем составленный post запрос
     requests_post = requests.post(urls.url_pet, json=request, verify=False)
     # выводим ответ отправленного post запроса
@@ -101,7 +110,7 @@ def test_put_pet():
     request_put = {}
     request_put['id'] = str(requests_post.json()['id'])
     request_put['name'] = support_steps.generate_random_letter_string(7)
-    request_put['photoUrls'] = ['Photodog']
+    request_put['photoUrls'] = [support_steps.generate_random_letter_string(8)]
     # выведем тело сформированного post запроса для проверки
     print('request_put=', request_put)
     # отправим put запрос
@@ -110,13 +119,15 @@ def test_put_pet():
     print('result_put=', json.dumps(request_put_r.json(), indent=4, sort_keys=True))
     assert str(request_put_r.json()['name']) == request_put['name']
 
+@pytest.mark.smoke_regression
+@pytest.mark.full_regression
 def test_del_pet():
     # отправим post запрос для создания сущности на удаление
     request = {}
     request['name'] = support_steps.generate_random_letter_string(6)
-    request['photoUrls'] = ['photocat']
+    request['photoUrls'] = [support_steps.generate_random_letter_string(8)]
     request['category'] = {}
-    request['category']['name'] = 'cats'
+    request['category']['name'] = support_steps.generate_random_letter_string(4)
 
     requests_post = requests.post(urls.url_pet, json=request, verify=False)
     print('result=', json.dumps(requests_post.json(), indent=4, sort_keys=True))
@@ -125,13 +136,15 @@ def test_del_pet():
     print("result_del=", json.dumps(request_del.json(), indent=4, sort_keys=True))
     assert str(request_del).__contains__('200')
 
+@pytest.mark.smoke_regression
+@pytest.mark.full_regression
 def test_put_pet_assert():
     # заполняем тело запроса
     request = {}
     request['name'] = support_steps.generate_random_letter_string(6)
-    request['photoUrls'] = ['photocat']
+    request['photoUrls'] = [support_steps.generate_random_letter_string(8)]
     request['category'] = {}
-    request['category']['name'] = 'cats'
+    request['category']['name'] = support_steps.generate_random_letter_string(4)
     # отправляем post запрос
     requests_post = requests.post(urls.url_pet, json=request, verify=False)
     # проверяем результат запроса
@@ -141,7 +154,7 @@ def test_put_pet_assert():
     #  id берем с ответа на предыдущий запрос
     request_put['id'] = str(requests_post.json()['id'])
     request_put['name'] = support_steps.generate_random_letter_string(6)
-    request_put['photoUrls'] = ['Photodog']
+    request_put['photoUrls'] = [support_steps.generate_random_letter_string(8)]
     #  отправляем put запрос
     request_put_r = requests.put(urls.url_pet, json=request_put, verify=False)
     #  проверяем ответ на запрос
@@ -151,12 +164,13 @@ def test_put_pet_assert():
     # проверяем что параметр name get запроса совпадает с параметром name put запроса
     assert request_get.json()['name'] == request_put['name']
 
+@pytest.mark.full_regression
 def test_put_pet_negative():
     # заполняем тело запроса
     request_put = {}
     request_put['id'] = []
     request_put['name'] = support_steps.generate_random_letter_string(6)
-    request_put['photoUrls'] = ['Photodog']
+    request_put['photoUrls'] = [support_steps.generate_random_letter_string(8)]
     # отправляем put запрос
     request_put_r = requests.put(urls.url_pet, json=request_put, verify=False)
     # проверяем ответ на запрос
@@ -165,13 +179,14 @@ def test_put_pet_negative():
     assert request_put_r.json()['message'] == "something bad happened"
 
 
+@pytest.mark.full_regression
 def test_delete_pet_negative():
     # сформируем и отправим post запрос для создания сущности
     request = {}
     request['name'] = support_steps.generate_random_letter_string(6)
-    request['photoUrls'] = ['photocat']
+    request['photoUrls'] = [support_steps.generate_random_letter_string(8)]
     request['category'] = {}
-    request['category']['name'] = 'cats'
+    request['category']['name'] = support_steps.generate_random_letter_string(4)
 
     requests_post = requests.post(urls.url_pet, json=request, verify=False)
     print('result=', json.dumps(requests_post.json(), indent=4, sort_keys=True))
@@ -185,13 +200,15 @@ def test_delete_pet_negative():
     assert str(request_del).__contains__('404')
 
 
+@pytest.mark.smoke_regression
+@pytest.mark.full_regression
 def test_post_image():
     # сформируем и отправим post запрос для создания сущности
     request = {}
     request['name'] = support_steps.generate_random_letter_string(6)
-    request['photoUrls'] = ['photoDog']
+    request['photoUrls'] = [support_steps.generate_random_letter_string(8)]
     request['category'] = {}
-    request['category']['name'] = 'dogs'
+    request['category']['name'] = support_steps.generate_random_letter_string(4)
     requests_post = requests.post(urls.url_pet, json=request, verify=False)
     print('result_post=', json.dumps(requests_post.json(), indent=4, sort_keys=True))
     # откроем файл для чтения
@@ -205,13 +222,14 @@ def test_post_image():
     # Проверка ответа на загрузку post запроса с аттачем
     assert post_file.json()['code'] is not None
 
+@pytest.mark.full_regression
 def test_post_image_negative():
     # сформируем и отправим post запрос для создания сущности
     request = {}
     request['name'] = support_steps.generate_random_letter_string(6)
-    request['photoUrls'] = ['photoDog']
+    request['photoUrls'] = [support_steps.generate_random_letter_string(8)]
     request['category'] = {}
-    request['category']['name'] = 'dogs'
+    request['category']['name'] = support_steps.generate_random_letter_string(4)
 
     requests_post = requests.post(urls.url_pet, json=request, verify=False)
     print('result_post=', json.dumps(requests_post.json(), indent=4, sort_keys=True))
@@ -223,13 +241,15 @@ def test_post_image_negative():
     # Проверка ответа на загрузку post запроса с аттачем
     assert str(post_file).__contains__("415")
 
+@pytest.mark.smoke_regression
+@pytest.mark.full_regression
 def test_post_pet_update():
     # заполняем тело запроса
     request = {}
     request['name'] = support_steps.generate_random_letter_string(6)
-    request['photoUrls'] = ['photocat']
+    request['photoUrls'] = [support_steps.generate_random_letter_string(8)]
     request['category'] = {}
-    request['category']['name'] = 'cats'
+    request['category']['name'] = support_steps.generate_random_letter_string(4)
     # отправляем post запрос
     requests_post = requests.post(urls.url_pet, json=request, verify=False)
     # выводим ответ в формате json
@@ -255,13 +275,14 @@ def test_post_pet_update():
     assert request_get.json()['name'] == name
     assert request_get.json()['status'] == status
 
+@pytest.mark.full_regression
 def test_post_pet_update_negative():
     # заполняем тело запроса
     request = {}
     request['name'] = support_steps.generate_random_letter_string(6)
-    request['photoUrls'] = ['photocat']
+    request['photoUrls'] = [support_steps.generate_random_letter_string(8)]
     request['category'] = {}
-    request['category']['name'] = 'cats'
+    request['category']['name'] = support_steps.generate_random_letter_string(4)
     # отправляем post запрос
     requests_post = requests.post(urls.url_pet, json=request, verify=False)
     # выводим ответ в формате json
@@ -281,13 +302,15 @@ def test_post_pet_update_negative():
     assert str(request_update_post).__contains__('404')
     assert request_update_post.json()['message'] == "not found"
 
+@pytest.mark.smoke_regression
+@pytest.mark.full_regression
 def test_find_by_status():
     # задаем тело запроса
     request = {}
     request['name'] = support_steps.generate_random_letter_string(6)
-    request['photoUrls'] = ['photocat']
+    request['photoUrls'] = [support_steps.generate_random_letter_string(8)]
     request['category'] = {}
-    request['category']['name'] = 'cats'
+    request['category']['name'] = support_steps.generate_random_letter_string(4)
     request['status'] = 'available'
     # отправляем post запрос
     requests_post = requests.post(urls.url_pet, json=request, verify=False)
@@ -301,13 +324,14 @@ def test_find_by_status():
     assert str(request_get).__contains__('200')
     assert request_get.json() != []
 
+@pytest.mark.full_regression
 def test_find_by_status_negative():
     # задаем тело запроса
     request = {}
     request['name'] = support_steps.generate_random_letter_string(6)
-    request['photoUrls'] = ['photocat']
+    request['photoUrls'] = [support_steps.generate_random_letter_string(8)]
     request['category'] = {}
-    request['category']['name'] = 'cats'
+    request['category']['name'] = support_steps.generate_random_letter_string(4)
     request['status'] = 'available'
     # отправляем post запрос
     requests_post = requests.post(urls.url_pet, json=request, verify=False)
