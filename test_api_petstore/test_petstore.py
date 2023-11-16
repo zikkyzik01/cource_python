@@ -348,7 +348,6 @@ def test_find_by_status(type):
     # выводим ответ на запрос в формате json
     print('result=', json.dumps(requests_post.json(), indent=4, sort_keys=True))
     # отправляем get запрос
-    request_get = request_steps.request_get(status)
     if requests_post.json()['status'] == 'sold':
         request_get = request_steps.request_get(urls.url_pet_find_by_status('sold'))
     if requests_post.json()['status'] == 'available':
