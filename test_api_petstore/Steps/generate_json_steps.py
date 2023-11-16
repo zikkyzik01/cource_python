@@ -3,6 +3,7 @@ from Steps import support_steps as support_steps
 # Создание JSON для метода post /pet с обязательными параметрами
 def create_json_post_pet_required_params():
     request = {}
+    request['id'] = support_steps.generate_random_number_string(11)
     request['name'] = support_steps.generate_random_letter_string(6)
     request['photoUrls'] = [support_steps.generate_random_letter_string(8)]
     print("request = ", request)
@@ -11,10 +12,11 @@ def create_json_post_pet_required_params():
 # Создание JSON для метода post /pet с обязательными параметрами
 def create_json_post_pet_all_params():
     request = {}
+    request['id'] = support_steps.generate_random_number_string(11)
     request['name'] = support_steps.generate_random_letter_string(6)
     request['photoUrls'] = [support_steps.generate_random_letter_string(8)]
     request['category'] = {}
-    request['category']['name'] = support_steps.generate_random_letter_string(4)
+    request['category']['name'] = support_steps.generate_random_letter_string(7)
     request['category']['status'] = "available"
     request['tags'] = [{}]
     request['tags'][0]['name'] = support_steps.generate_random_letter_string(6)

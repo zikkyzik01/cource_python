@@ -1,5 +1,4 @@
 import json
-import requests
 import pytest
 import for_files
 from resources import urls as urls
@@ -146,8 +145,9 @@ def test_del_pet(type):
 # Редактирование анкеты питомца с проверкой внесенных изменений get запросом
 def test_put_pet_assert():
     # заполняем тело запроса
-    request = generate_json_steps.create_json_post_pet_required_params()
+    request = generate_json_steps.create_json_post_pet_all_params()
     # отправляем post запрос
+    print(("id", request))
     requests_post = request_steps.request_post(urls.url_pet, request)
     # проверяем результат запроса
     print('result_post=', json.dumps(requests_post.json(), indent=4, sort_keys=True))
@@ -159,10 +159,10 @@ def test_put_pet_assert():
     # отправим put запрос
     request_put_r = request_steps.request_put(urls.url_pet, request_put)
     # выводим ответ отправленного put запроса
-    print('result_put=', json.dumps(request_put_r.json(), indent=4, sort_keys=True))
+    print('result_put=', json.dumps(request_put_r.json()['id'], indent=4, sort_keys=True))
     assert_steps.assert_equals_response_params(request_put_r, request_put)
     # проверяем что данные изменились
-    request_get = request_steps.request_get(urls.url_pet_get(str(requests_post.json()['id'])))
+    request_get = request_steps.request_get(urls.url_pet_get(str(request_put_r.json()['id'])))
     # проверяем что параметр name get запроса совпадает с параметром name put запроса
     assert_steps.assert_equals_response_params_name(request_get, request_put_r)
 
@@ -265,7 +265,7 @@ def test_post_image_negative(type):
         (generate_json_steps.create_json_post_pet_required_params()),
         (generate_json_steps.create_json_post_pet_all_params())
     ],
-    ids=["required params", "all params"]
+    ids=["required param", "all param"]
 )
 # Проверка изменения параметров в анкете питомца
 def test_post_pet_update(type):
@@ -348,6 +348,7 @@ def test_find_by_status(type):
     # выводим ответ на запрос в формате json
     print('result=', json.dumps(requests_post.json(), indent=4, sort_keys=True))
     # отправляем get запрос
+    request_get = request_steps.request_get(status)
     if requests_post.json()['status'] == 'sold':
         request_get = request_steps.request_get(urls.url_pet_find_by_status('sold'))
     if requests_post.json()['status'] == 'available':

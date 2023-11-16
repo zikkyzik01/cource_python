@@ -25,6 +25,8 @@ def assert_correct_code(request):
 
 # Функция проверяет что name ответа и запроса равны
 def assert_equals_response_params_name(first, second):
+    print("1", str(first.json()['name']))
+    print("2", str(second.json()['name']))
     assert str(first.json()['name']) == str(second.json()['name'])
 
 # Функция проверяет что параметр не пустой
