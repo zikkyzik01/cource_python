@@ -12,7 +12,7 @@ from Steps import assert_steps as assert_steps
 # Создание питомца
 def test_api():
     # задаем тело запроса
-    request = generate_json_steps.create_json_post_pet_required_params()
+    request = generate_json_steps.create_json_post_pet_required_params(support_steps.generate_random_number_string(11))
     # отправляем post запрос
     requests_post = request_steps.request_post(urls.url_pet, request)
     # выводим ответ на запрос в формате json
@@ -23,8 +23,8 @@ def test_api():
 @pytest.mark.parametrize(
     'type',
     [
-        (generate_json_steps.create_json_post_pet_required_params()),
-        (generate_json_steps.create_json_post_pet_all_params())
+        (generate_json_steps.create_json_post_pet_required_params(support_steps.generate_random_number_string(11))),
+        (generate_json_steps.create_json_post_pet_all_params(support_steps.generate_random_number_string(11), 'available'))
     ],
     ids=["required params", "all params"]
 )
@@ -48,28 +48,20 @@ def test_post_pet(type):
 # Негативный сценарий создания питомца с проверкой на совпадение по id
 def test_post_pet_negative():
     # задаем url и формируем тело запроса
-    request = generate_json_steps.create_json_post_pet_negative_params()
+    request = generate_json_steps.create_json_post_pet_all_params([], None)
     # отправляем post запрос
     requests_post = request_steps.request_post(urls.url_pet, request)
     # выводим ответ на запрос в формате json
     print('result=', json.dumps(requests_post.json(), indent=4, sort_keys=True))
     # выполняем проверку параметра message
-    assert_steps.assert_not_correct_message(requests_post)
+    assert_steps.assert_not_correct_message(requests_post, "something bad happened")
 
 @pytest.mark.smoke_regression
 @pytest.mark.full_regression
-@pytest.mark.parametrize(
-    'type',
-    [
-        (generate_json_steps.create_json_post_pet_required_params()),
-        (generate_json_steps.create_json_post_pet_all_params())
-    ],
-    ids=["required params", "all params"]
-)
 # Проверка питомца по id
-def test_get_pet(type):
+def test_get_pet():
     # задаем тело запроса
-    request = type
+    request = generate_json_steps.create_json_post_pet_all_params(support_steps.generate_random_number_string(11), 'available')
     # отправляем post запрос
     requests_post = request_steps.request_post(urls.url_pet, request)
     # выводим ответ на запрос в формате json
@@ -86,7 +78,7 @@ def test_get_pet(type):
 # Негативный сценарий проверки питомца по id
 def test_get_pet_negative():
     # задаем тело запроса
-    request = generate_json_steps.create_json_post_pet_required_params()
+    request = generate_json_steps.create_json_post_pet_required_params(support_steps.generate_random_number_string(11))
     # отправляем post запрос
     requests_post = request_steps.request_post(urls.url_pet, request)
     # выводим ответ на запрос в формате json
@@ -96,20 +88,20 @@ def test_get_pet_negative():
     # выводим ответ на отправленный запрос в формате json
     print("result=", json.dumps(request_get.json(), indent=4, sort_keys=True))
     # выполняем проверку
-    assert_steps.assert_not_found(request_get)
+    assert_steps.assert_status_code(request_get, '404')
 
 @pytest.mark.smoke_regression
 @pytest.mark.full_regression
 # Редактирование анкеты питомца
 def test_put_pet():
     # заполняем тело запроса
-    request = generate_json_steps.create_json_post_pet_required_params()
+    request = generate_json_steps.create_json_post_pet_required_params(support_steps.generate_random_number_string(11))
     # отправляем составленный post запрос
     requests_post = request_steps.request_post(urls.url_pet, request)
     # выводим ответ отправленного post запроса
     print('result_post=', json.dumps(requests_post.json(), indent=4, sort_keys=True))
     # заполняем тело put запроса (url берем тот же)
-    request_put = generate_json_steps.create_json_post_update_pet_required_params(str(requests_post.json()['id']))
+    request_put = generate_json_steps.create_json_post_pet_required_params(str(requests_post.json()['id']))
     # выведем тело сформированного post запроса для проверки
     print('request_put=', request_put)
     # отправим put запрос
@@ -120,18 +112,10 @@ def test_put_pet():
 
 @pytest.mark.smoke_regression
 @pytest.mark.full_regression
-@pytest.mark.parametrize(
-    'type',
-    [
-        (generate_json_steps.create_json_post_pet_required_params()),
-        (generate_json_steps.create_json_post_pet_all_params())
-    ],
-    ids=["required params", "all params"]
-)
 # Удаление питомца
-def test_del_pet(type):
+def test_del_pet():
     # отправим post запрос для создания сущности на удаление
-    request = type
+    request = generate_json_steps.create_json_post_pet_all_params(support_steps.generate_random_number_string(11), 'available')
     requests_post = request_steps.request_post(urls.url_pet, request)
     print('result=', json.dumps(requests_post.json(), indent=4, sort_keys=True))
     # выполняем delete запрос
@@ -139,13 +123,13 @@ def test_del_pet(type):
     # выводим результат запроса
     print("result_del=", json.dumps(request_del.json(), indent=4, sort_keys=True))
     # проверка ответа
-    assert_steps.assert_correct_code(request_del)
+    assert_steps.assert_status_code(request_del, '200')
 
 @pytest.mark.full_regression
 # Редактирование анкеты питомца с проверкой внесенных изменений get запросом
 def test_put_pet_assert():
     # заполняем тело запроса
-    request = generate_json_steps.create_json_post_pet_all_params()
+    request = generate_json_steps.create_json_post_pet_all_params(support_steps.generate_random_number_string(11), 'available')
     # отправляем post запрос
     print(("id", request))
     requests_post = request_steps.request_post(urls.url_pet, request)
@@ -153,7 +137,7 @@ def test_put_pet_assert():
     print('result_post=', json.dumps(requests_post.json(), indent=4, sort_keys=True))
     # создаем новое наполнение в тело запроса
     # заполняем тело put запроса (url берем тот же)
-    request_put = generate_json_steps.create_json_post_update_pet_required_params(str(requests_post.json()['id']))
+    request_put = generate_json_steps.create_json_post_pet_all_params(str(requests_post.json()['id']), 'available')
     # выведем тело сформированного post запроса для проверки
     print('request_put=', request_put)
     # отправим put запрос
@@ -171,39 +155,31 @@ def test_put_pet_assert():
 # Негативный сценарий изменения данных о питомце
 def test_put_pet_negative():
     # заполняем тело запроса
-    request = generate_json_steps.create_json_post_pet_negative_params()
+    request = generate_json_steps.create_json_post_pet_all_params([], None)
     # отправляем put запрос
     request_put = request_steps.request_post(urls.url_pet, request)
     # проверяем ответ на запрос
     print('result_put=', json.dumps(request_put.json(), indent=4, sort_keys=True))
     # проверяем поле message
-    assert_steps.assert_not_correct_message(request_put)
+    assert_steps.assert_not_correct_message(request_put, "something bad happened")
 
 
 @pytest.mark.negative_tests
 @pytest.mark.full_regression
-@pytest.mark.parametrize(
-    'type',
-    [
-        (generate_json_steps.create_json_post_pet_required_params()),
-        (generate_json_steps.create_json_post_pet_all_params())
-    ],
-    ids=["required params", "all params"]
-)
 # Негативный сценарий удаления питомца
-def test_delete_pet_negative(type):
+def test_delete_pet_negative():
     # сформируем и отправим post запрос для создания сущности
-    request = type
+    request = generate_json_steps.create_json_post_pet_all_params(support_steps.generate_random_number_string(11), 'available')
     requests_post = request_steps.request_post(urls.url_pet, request)
     print('result=', json.dumps(requests_post.json(), indent=4, sort_keys=True))
     # проверяем ответ
-    assert_steps.assert_correct_code(requests_post)
+    assert_steps.assert_status_code(requests_post, '200')
     # отправляем запрос c невалидным id
     request_del = request_steps.request_delete(urls.url_pet_get(support_steps.generate_random_letter_string(4)))
     # выводим результат запроса
     print("result_del=", json.dumps(request_del.json(), indent=4, sort_keys=True))
     # проверяем ответ
-    assert_steps.assert_not_found(request_del)
+    assert_steps.assert_status_code(request_del, '404')
 
 
 @pytest.mark.smoke_regression
@@ -211,8 +187,8 @@ def test_delete_pet_negative(type):
 @pytest.mark.parametrize(
     'type',
     [
-        (generate_json_steps.create_json_post_pet_required_params()),
-        (generate_json_steps.create_json_post_pet_all_params())
+        (generate_json_steps.create_json_post_pet_required_params(support_steps.generate_random_number_string(11))),
+        (generate_json_steps.create_json_post_pet_all_params(support_steps.generate_random_number_string(11), 'available'))
     ],
     ids=["required params", "all params"]
 )
@@ -235,18 +211,10 @@ def test_post_image(type):
 
 @pytest.mark.negative_tests
 @pytest.mark.full_regression
-@pytest.mark.parametrize(
-    'type',
-    [
-        (generate_json_steps.create_json_post_pet_required_params()),
-        (generate_json_steps.create_json_post_pet_all_params())
-    ],
-    ids=["required params", "all params"]
-)
 # Негативный сценарий проверки аттачментов к анкете питомца
-def test_post_image_negative(type):
+def test_post_image_negative():
     # сформируем и отправим post запрос для создания сущности
-    request = type
+    request = generate_json_steps.create_json_post_pet_all_params(support_steps.generate_random_number_string(11), 'available')
     requests_post = request_steps.request_post(urls.url_pet, request)
     print('result_post=', json.dumps(requests_post.json(), indent=4, sort_keys=True))
     # сформируем post запрос для отправки без аттача с id ответа на прошлый запрос
@@ -255,15 +223,15 @@ def test_post_image_negative(type):
     # выводим url для проверки id и ответ который пришел
     print('response = ', urls.url_pet_upload(str(requests_post.json()['id'])), post_file)
     # Проверка ответа на загрузку post запроса с аттачем
-    assert_steps.assert_negative(post_file)
+    assert_steps.assert_status_code(post_file, '415')
 
 @pytest.mark.smoke_regression
 @pytest.mark.full_regression
 @pytest.mark.parametrize(
     'type',
     [
-        (generate_json_steps.create_json_post_pet_required_params()),
-        (generate_json_steps.create_json_post_pet_all_params())
+        (generate_json_steps.create_json_post_pet_required_params(support_steps.generate_random_number_string(11))),
+        (generate_json_steps.create_json_post_pet_all_params(support_steps.generate_random_number_string(11), 'available'))
     ],
     ids=["required param", "all param"]
 )
@@ -276,7 +244,7 @@ def test_post_pet_update(type):
     # выводим ответ в формате json
     print('result=', json.dumps(requests_post.json(), indent=4, sort_keys=True))
     # выполняем проверку что id в теле ответа не пустой
-    assert_steps.assert_correct_code(requests_post)
+    assert_steps.assert_status_code(requests_post, '200')
     # наполняем тело запроса
     name = support_steps.generate_random_letter_string(6)
     status = support_steps.generate_random_letter_string(6)
@@ -286,36 +254,28 @@ def test_post_pet_update(type):
     # Выводим ответ на запрос
     print('update=', json.dumps(request_update_post.json(), indent=4, sort_keys=True))
     # проверка на ошибку
-    assert_steps.assert_correct_code(request_update_post)
+    assert_steps.assert_status_code(request_update_post, '200')
     # для проверки изменений отправим get запрос с id указаным в ответе первого запроса
     request_get = request_steps.request_get(urls.url_pet_get(str(requests_post.json()['id'])))
     # выводим результа get запроса
     print('get request = ', json.dumps(request_get.json(), indent=4, sort_keys=True))
     # проверим что тело ответа на get запрос совпадает с телом отправленным в post запросе на изменения
-    assert_steps.assert_correct_code(request_get)
+    assert_steps.assert_status_code(request_get, '200')
     assert_steps.assert_equals_params(request_get, 'name', name)
     assert_steps.assert_equals_params(request_get, 'status', status)
 
 @pytest.mark.negative_tests
 @pytest.mark.full_regression
-@pytest.mark.parametrize(
-    'type',
-    [
-        (generate_json_steps.create_json_post_pet_required_params()),
-        (generate_json_steps.create_json_post_pet_all_params())
-    ],
-    ids=["required params", "all params"]
-)
 # Негативный сценарий проверки изменения параметров в анкете питомца
-def test_post_pet_update_negative(type):
+def test_post_pet_update_negative():
     # заполняем тело запроса
-    request = type
+    request = generate_json_steps.create_json_post_pet_all_params(support_steps.generate_random_number_string(11), 'available')
     # отправляем post запрос
     requests_post = request_steps.request_post(urls.url_pet, request)
     # выводим ответ в формате json
     print('result=', json.dumps(requests_post.json(), indent=4, sort_keys=True))
     # выполняем проверку что id в теле ответа не пустой
-    assert_steps.assert_correct_code(requests_post)
+    assert_steps.assert_status_code(requests_post, '200')
     # задаем url запроса, указываем не существующий id
     # наполняем тело запроса
     name = support_steps.generate_random_letter_string(6)
@@ -326,16 +286,16 @@ def test_post_pet_update_negative(type):
     # Выводим ответ на запрос
     print('update=', json.dumps(request_update_post.json(), indent=4, sort_keys=True))
     # проверка на ошибку
-    assert_steps.assert_not_found(request_update_post)
+    assert_steps.assert_status_code(request_update_post, '404')
 
 @pytest.mark.smoke_regression
 @pytest.mark.full_regression
 @pytest.mark.parametrize(
     'type',
     [
-        (generate_json_steps.create_json_post_pet_all_params_with_status("available")),
-        (generate_json_steps.create_json_post_pet_all_params_with_status("pending")),
-        (generate_json_steps.create_json_post_pet_all_params_with_status("sold"))
+        (generate_json_steps.create_json_post_pet_all_params(support_steps.generate_random_number_string(11), "available")),
+        (generate_json_steps.create_json_post_pet_all_params(support_steps.generate_random_number_string(11), "pending")),
+        (generate_json_steps.create_json_post_pet_all_params(support_steps.generate_random_number_string(11), "sold"))
     ],
     ids=["status available", "status pending", "status sold"]
 )
@@ -348,16 +308,10 @@ def test_find_by_status(type):
     # выводим ответ на запрос в формате json
     print('result=', json.dumps(requests_post.json(), indent=4, sort_keys=True))
     # отправляем get запрос
-    if requests_post.json()['status'] == 'sold':
-        request_get = request_steps.request_get(urls.url_pet_find_by_status('sold'))
-    if requests_post.json()['status'] == 'available':
-        request_get = request_steps.request_get(urls.url_pet_find_by_status('available'))
-    if requests_post.json()['status'] == 'pending':
-        request_get = request_steps.request_get(urls.url_pet_find_by_status('pending'))
-    # выводим ответ в формате json
+    request_get = request_steps.request_get(urls.url_for_find(requests_post))
     print('result get=', json.dumps(request_get.json(), indent=4, sort_keys=True))
     #выполняем проверку на статус код и что массив не пуст
-    assert_steps.assert_correct_code(request_get)
+    assert_steps.assert_status_code(request_get, '200')
     assert_steps.assert_massive(request_get)
 
 @pytest.mark.negative_tests
@@ -365,9 +319,9 @@ def test_find_by_status(type):
 @pytest.mark.parametrize(
     'type',
     [
-        (generate_json_steps.create_json_post_pet_all_params_with_status("available")),
-        (generate_json_steps.create_json_post_pet_all_params_with_status("pending")),
-        (generate_json_steps.create_json_post_pet_all_params_with_status("sold"))
+        (generate_json_steps.create_json_post_pet_all_params(support_steps.generate_random_number_string(11), "available")),
+        (generate_json_steps.create_json_post_pet_all_params(support_steps.generate_random_number_string(11), "pending")),
+        (generate_json_steps.create_json_post_pet_all_params(support_steps.generate_random_number_string(11), "sold"))
     ],
     ids=["status available", "status pending", "status sold"]
 )

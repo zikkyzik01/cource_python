@@ -14,3 +14,12 @@ def url_pet_find_by_status(status):
 
 def url_pet_upload(pet_id):
     return url_pet + pet_id + "/uploadImage"
+
+def url_for_find(responce):
+    if responce.json()['status'] == 'sold':
+        status = url_pet + "findByStatus?status=" + 'sold'
+    if responce.json()['status'] == 'available':
+        status = url_pet + "findByStatus?status=" + 'available'
+    if responce.json()['status'] == 'pending':
+        status = url_pet + "findByStatus?status=" + 'pending'
+    return status

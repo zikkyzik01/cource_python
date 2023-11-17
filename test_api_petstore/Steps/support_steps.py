@@ -18,3 +18,4 @@ def generate_random_letter_string_mail(length):
     for i in range(0, length):
         result += str(random.choice(string.ascii_letters[random.randint(0, 5)]))
     return result + '@mail.net'
+
