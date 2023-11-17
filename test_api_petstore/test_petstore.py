@@ -1,12 +1,14 @@
 import json
 import pytest
 import for_files
+import allure
 from resources import urls as urls
 from Steps import support_steps as support_steps
 from Steps import generate_json_steps as generate_json_steps
 from Steps import request_steps as request_steps
 from Steps import assert_steps as assert_steps
 
+@allure.step
 @pytest.mark.smoke_regression
 @pytest.mark.full_regression
 # Создание питомца
@@ -18,6 +20,7 @@ def test_api():
     # выводим ответ на запрос в формате json
     print('result=', json.dumps(requests_post.json(), indent=4, sort_keys=True))
 
+@allure.step
 @pytest.mark.smoke_regression
 @pytest.mark.full_regression
 @pytest.mark.parametrize(
@@ -125,6 +128,7 @@ def test_del_pet():
     # проверка ответа
     assert_steps.assert_status_code(request_del, '200')
 
+@allure.step
 @pytest.mark.full_regression
 # Редактирование анкеты питомца с проверкой внесенных изменений get запросом
 def test_put_pet_assert():
@@ -163,7 +167,7 @@ def test_put_pet_negative():
     # проверяем поле message
     assert_steps.assert_not_correct_message(request_put, "something bad happened")
 
-
+@allure.step
 @pytest.mark.negative_tests
 @pytest.mark.full_regression
 # Негативный сценарий удаления питомца
@@ -199,7 +203,7 @@ def test_post_image(type):
     requests_post = request_steps.request_post(urls.url_pet, request)
     print('result_post=', json.dumps(requests_post.json(), indent=4, sort_keys=True))
     # откроем файл для чтения
-    file = for_files.open_file('venv/Scripts/files/send.txt')
+    file = for_files.open_file('C:/Users/19787543/PycharmProjects/cource_python/test_api_petstore/venv/Scripts/files/send.txt')
     # отправляем post запрос с аттачем
     post_file = request_steps.request_file(urls.url_pet_upload(str(requests_post.json()['id'])), file)
     # выводим url на который отправили запрос для проверки сформированного id, и проверяем ответ на запрос
@@ -327,7 +331,7 @@ def test_find_by_status(type):
 )
 # Негативный сценарий проверки получения анкеты питомца по статусу
 def test_find_by_status_negative(type):
-    # задаем тело запроса
+    # Задаем тело запроса
     request = type
     # отправляем post запрос
     requests_post = request_steps.request_post(urls.url_pet, request)
