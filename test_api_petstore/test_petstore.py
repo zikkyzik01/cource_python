@@ -284,7 +284,7 @@ def test_find_by_status_negative():
     # отправляем post запрос
     requests_post = request_steps.request_post(urls.url_pet, request)
     # выводим ответ в формате json
-    request_get = request_steps.request_get(urls.url_pet_find_by_status('open'))
+    request_get = request_steps.request_get(urls.url_pet_find_by_status(support_steps.generate_random_letter_string(5)))
     # выполняем проверку на статус код и что массив пуст
     assert_steps.assert_massive_null(request_get)
 
