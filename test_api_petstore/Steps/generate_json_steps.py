@@ -12,7 +12,7 @@ def create_json_post_pet_required_params():
         return request
 
 # Создание JSON для метода post /pet с определенными параметрами
-def create_json_post_pet_all_params(status):
+def create_json_post_pet_all_params():
     with allure.step("Создание JSON для метода post /pet с определенными параметрами"):
         request = {}
         request['id'] = support_steps.generate_random_number_string(11)
@@ -20,7 +20,7 @@ def create_json_post_pet_all_params(status):
         request['photoUrls'] = [support_steps.generate_random_letter_string(8)]
         request['category'] = {}
         request['category']['name'] = support_steps.generate_random_letter_string(7)
-        request['status'] = status
+        request['status'] = 'available'
         request['tags'] = [{}]
         request['tags'][0]['name'] = support_steps.generate_random_letter_string(6)
         print("request = ", request)

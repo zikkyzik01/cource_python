@@ -25,7 +25,7 @@ def test_api():
     'type',
     [
         (generate_json_steps.create_json_post_pet_required_params()),
-        (generate_json_steps.create_json_post_pet_all_params('available'))
+        (generate_json_steps.create_json_post_pet_all_params())
     ],
     ids=["required params", "all params"]
 )
@@ -47,7 +47,7 @@ def test_post_pet(type):
 # Негативный сценарий создания питомца с проверкой на совпадение по id
 def test_post_pet_negative():
     # задаем url и формируем тело запроса
-    request = generate_json_steps.create_json_post_pet_all_params(None)
+    request = generate_json_steps.create_json_post_pet_all_params()
     request['name']=[]
     # отправляем post запрос
     requests_post = request_steps.request_post(urls.url_pet, request)
@@ -59,7 +59,7 @@ def test_post_pet_negative():
 # Проверка питомца по id
 def test_get_pet():
     # задаем тело запроса
-    request = generate_json_steps.create_json_post_pet_all_params(None)
+    request = generate_json_steps.create_json_post_pet_all_params()
     # отправляем post запрос
     requests_post = request_steps.request_post(urls.url_pet, request)
     # отправляем get запрос
@@ -100,7 +100,7 @@ def test_put_pet():
 # Удаление питомца
 def test_del_pet():
     # отправим post запрос для создания сущности на удаление
-    request = generate_json_steps.create_json_post_pet_all_params(None)
+    request = generate_json_steps.create_json_post_pet_all_params()
     requests_post = request_steps.request_post(urls.url_pet, request)
     # выполняем delete запрос
     request_del = request_steps.request_delete(urls.url_pet_get(str(requests_post.json()['id'])))
@@ -112,11 +112,12 @@ def test_del_pet():
 # Редактирование анкеты питомца с проверкой внесенных изменений get запросом
 def test_put_pet_assert():
     # заполняем тело запроса
-    request = generate_json_steps.create_json_post_pet_all_params(None)
+    request = generate_json_steps.create_json_post_pet_all_params()
     # отправляем post запрос
     requests_post = request_steps.request_post(urls.url_pet, request)
     # создаем новое наполнение в тело запроса (url берем c ответа первого шага)
-    request_put = generate_json_steps.create_json_post_pet_all_params(str(requests_post.json()['id']))
+    request_put = generate_json_steps.create_json_post_pet_all_params()
+    request_put['id'] = str(requests_post.json()['id'])
     # отправим put запрос
     request_put_r = request_steps.request_put(urls.url_pet, request_put)
     # проверяем ответ отправленного put запроса
@@ -131,7 +132,7 @@ def test_put_pet_assert():
 # Негативный сценарий изменения данных о питомце
 def test_put_pet_negative():
     # заполняем тело запроса
-    request = generate_json_steps.create_json_post_pet_all_params(None)
+    request = generate_json_steps.create_json_post_pet_all_params()
     request['name'] = []
     # отправляем put запрос
     request_put = request_steps.request_post(urls.url_pet, request)
@@ -144,7 +145,7 @@ def test_put_pet_negative():
 # Негативный сценарий удаления питомца
 def test_delete_pet_negative():
     # сформируем и отправим post запрос для создания сущности
-    request = generate_json_steps.create_json_post_pet_all_params('available')
+    request = generate_json_steps.create_json_post_pet_all_params()
     requests_post = request_steps.request_post(urls.url_pet, request)
     # проверяем ответ
     assert_steps.assert_status_code(requests_post, '200')
@@ -160,7 +161,7 @@ def test_delete_pet_negative():
     'type',
     [
         (generate_json_steps.create_json_post_pet_required_params()),
-        (generate_json_steps.create_json_post_pet_all_params('available'))
+        (generate_json_steps.create_json_post_pet_all_params())
     ],
     ids=["required params", "all params"]
 )
@@ -183,7 +184,7 @@ def test_post_image(type):
 # Негативный сценарий проверки аттачментов к анкете питомца
 def test_post_image_negative():
     # сформируем и отправим post запрос для создания сущности
-    request = generate_json_steps.create_json_post_pet_all_params('available')
+    request = generate_json_steps.create_json_post_pet_all_params()
     requests_post = request_steps.request_post(urls.url_pet, request)
     # сформируем post запрос для отправки без аттача с id ответа на прошлый запрос
     # отправляем запрос
@@ -197,7 +198,7 @@ def test_post_image_negative():
     'type',
     [
         (generate_json_steps.create_json_post_pet_required_params()),
-        (generate_json_steps.create_json_post_pet_all_params('available'))
+        (generate_json_steps.create_json_post_pet_all_params())
     ],
     ids=["required param", "all param"]
 )
@@ -229,7 +230,7 @@ def test_post_pet_update(type):
 # Негативный сценарий проверки изменения параметров в анкете питомца
 def test_post_pet_update_negative():
     # заполняем тело запроса
-    request = generate_json_steps.create_json_post_pet_all_params('available')
+    request = generate_json_steps.create_json_post_pet_all_params()
     # отправляем post запрос
     requests_post = request_steps.request_post(urls.url_pet, request)
     # выполняем проверку что id в теле ответа не пустой
@@ -245,42 +246,41 @@ def test_post_pet_update_negative():
 
 @pytest.mark.smoke_regression
 @pytest.mark.full_regression
-@pytest.mark.parametrize(
-    'type',
-    [
-        (generate_json_steps.create_json_post_pet_all_params("available")),
-        (generate_json_steps.create_json_post_pet_all_params("pending")),
-        (generate_json_steps.create_json_post_pet_all_params("sold"))
-    ],
-    ids=["status available", "status pending", "status sold"]
-)
 # Проверка получения анкеты питомца по статусу
-def test_find_by_status(type):
+def test_find_by_status():
     # задаем тело запроса
-    request = type
-    # отправляем post запрос
-    requests_post = request_steps.request_post(urls.url_pet, request)
+    request = generate_json_steps.create_json_post_pet_all_params()
+    request['status'] = 'available'
+    # отправляем post запрос со статусом available
+    response_status_available = request_steps.request_post(urls.url_pet, request)
     # отправляем get запрос
-    request_get = request_steps.request_get(urls.url_for_find(requests_post))
+    request_get_available = request_steps.request_get(urls.url_for_find(response_status_available.json()['status']))
+    # выполняем проверку на статус код и что массив не пуст
+    assert_steps.assert_status_code(request_get_available, '200')
+    assert_steps.assert_massive(request_get_available)
+    # отправляем post запрос со статусом pending
+    request['status'] = 'pending'
+    response_status_pending = request_steps.request_post(urls.url_pet, request)
+    # отправляем get запрос
+    request_get_pending = request_steps.request_get(urls.url_for_find(response_status_pending.json()['status']))
+    # выполняем проверку на статус код и что массив не пуст
+    assert_steps.assert_status_code(request_get_pending, '200')
+    assert_steps.assert_massive(request_get_pending)
+    # отправляем post запрос со статусом sold
+    request['status'] = 'sold'
+    response_status_sold = request_steps.request_post(urls.url_pet, request)
+    # отправляем get запрос
+    request_get_sold = request_steps.request_get(urls.url_for_find(response_status_sold.json()['status']))
     #выполняем проверку на статус код и что массив не пуст
-    assert_steps.assert_status_code(request_get, '200')
-    assert_steps.assert_massive(request_get)
+    assert_steps.assert_status_code(request_get_sold, '200')
+    assert_steps.assert_massive(request_get_sold)
 
 @pytest.mark.negative_tests
 @pytest.mark.full_regression
-@pytest.mark.parametrize(
-    'type',
-    [
-        (generate_json_steps.create_json_post_pet_all_params("available")),
-        (generate_json_steps.create_json_post_pet_all_params("pending")),
-        (generate_json_steps.create_json_post_pet_all_params("sold"))
-    ],
-    ids=["status available", "status pending", "status sold"]
-)
 # Негативный сценарий проверки получения анкеты питомца по статусу
-def test_find_by_status_negative(type):
+def test_find_by_status_negative():
     # Задаем тело запроса
-    request = type
+    request = generate_json_steps.create_json_post_pet_all_params()
     # отправляем post запрос
     requests_post = request_steps.request_post(urls.url_pet, request)
     # выводим ответ в формате json
