@@ -14,6 +14,3 @@ def url_pet_find_by_status(status):
 
 def url_pet_upload(pet_id):
     return url_pet + pet_id + "/uploadImage"
-
-def url_for_find(status):
-    return url_pet + "findByStatus?status=" + status
