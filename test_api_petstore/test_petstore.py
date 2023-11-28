@@ -246,34 +246,27 @@ def test_post_pet_update_negative():
 
 @pytest.mark.smoke_regression
 @pytest.mark.full_regression
+@pytest.mark.parametrize(
+    'type',
+    [
+        ('available'),
+        ('pending'),
+        ('sold')
+    ],
+    ids=["status_available", "status_pending", "status_sold"]
+)
 # Проверка получения анкеты питомца по статусу
-def test_find_by_status():
+def test_find_by_status(type):
     # задаем тело запроса
     request = generate_json_steps.create_json_post_pet_all_params()
-    request['status'] = 'available'
+    request['status'] = type
     # отправляем post запрос со статусом available
-    response_status_available = request_steps.request_post(urls.url_pet, request)
+    request_steps.request_post(urls.url_pet, request)
     # отправляем get запрос
-    request_get_available = request_steps.request_get(urls.url_pet_find_by_status(response_status_available.json()['status']))
+    request_get_available = request_steps.request_get(urls.url_pet_find_by_status(request['status']))
     # выполняем проверку на статус код и что массив не пуст
     assert_steps.assert_status_code(request_get_available, '200')
     assert_steps.assert_massive(request_get_available)
-    # отправляем post запрос со статусом pending
-    request['status'] = 'pending'
-    response_status_pending = request_steps.request_post(urls.url_pet, request)
-    # отправляем get запрос
-    request_get_pending = request_steps.request_get(urls.url_pet_find_by_status(response_status_pending.json()['status']))
-    # выполняем проверку на статус код и что массив не пуст
-    assert_steps.assert_status_code(request_get_pending, '200')
-    assert_steps.assert_massive(request_get_pending)
-    # отправляем post запрос со статусом sold
-    request['status'] = 'sold'
-    response_status_sold = request_steps.request_post(urls.url_pet, request)
-    # отправляем get запрос
-    request_get_sold = request_steps.request_get(urls.url_pet_find_by_status(response_status_sold.json()['status']))
-    #выполняем проверку на статус код и что массив не пуст
-    assert_steps.assert_status_code(request_get_sold, '200')
-    assert_steps.assert_massive(request_get_sold)
 
 @pytest.mark.negative_tests
 @pytest.mark.full_regression
